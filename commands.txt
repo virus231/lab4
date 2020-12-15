@@ -1,0 +1,11 @@
+aws elbv2 create-load-balancer --name Virus --type application --scheme internet-facing --subnets subnet-178b596b subnet-74cfab1e
+aws ec2 create-security-group --group-name  launch-wizard-1 --description launch-wizard-1
+aws ec2 authorize-security-group-ingress --group-id sg-08f724f7b94b0b325 --protocol tcp --port 80 --cidr 0.0.0.0/0
+aws ec2 authorize-security-group-ingress --group-id sg-08f724f7b94b0b325 --protocol tcp --port 22 --cidr 0.0.0.0/0
+aws elbv2 set-security-groups --load-balancer-arn arn:aws:elasticloadbalancing:us-east-1:072781008649:loadbalancer/app/Virus/ca3faf5503b2b31b --security-groups sg-sg-08f724f7b94b0b325
+aws ec2 run-instances --image-id ami-0dfb9353dcf939353 --count 2 --instance-type t2.micro --key-name Virus --associate-public-ip-address --security-group-ids sg-sg-08f724f7b94b0b325
+aws elbv2 create-target-group --name Lab4Target --target-type instance --protocol HTTP --port 80 --vpc-id vpc-dc408fa1
+aws elbv2 register-targets --target-group-arn arn:aws:elasticloadbalancing:us-east-1:072781008649:targetgroup/Lab4Target/5c342389c6e7a798 --targets Id=i-0028fe73b7144a78c Id=i-0ab306792ca1898c0
+aws elbv2 create-listener --load-balancer-arn arn:aws:elasticloadbalancing:us-east-1:072781008649:loadbalancer/app/Virus/ca3faf5503b2b31b --protocol HTTP --port 80 --default-actions Type=forward,TargetGroupArn=arn:aws:elasticloadbalancing:us-east-1:072781008649:targetgroup/Lab4Target/5c342389c6e7a798
+
+
